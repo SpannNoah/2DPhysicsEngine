@@ -1,0 +1,37 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.ncb
+*.sdf
+*.opensdf
+*.aps
+
+# Build output
+Debug/
+Release/
+x64/
+x86/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+*.obj
+*.pdb
+*.exe
+*.ilk
+*.log
+*.tlog
+*.idb
+*.ipch
+*.pch
+*.lib
+*.exp
+*.iobj
+*.ipdb
+*.opendb
+*.VC.db
+*.VC.opendb
+
+# Build directories inside project
+2DPhysicsEngine/Debug/
+2DPhysicsEngine/x64/
