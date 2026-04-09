@@ -337,6 +337,8 @@ void Application::Update() {
             Contact contact;
             if (CollisionDetection::IsColliding(a, b, contact)) 
             {
+                contact.ResolvePenetration();
+
                 Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFF00FFFF);
                 Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFF00FFFF);
                 Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15, contact.start.y + contact.normal.y * 15, 0xFFFF00FF);
