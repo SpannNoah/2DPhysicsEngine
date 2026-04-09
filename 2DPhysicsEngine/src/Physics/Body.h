@@ -6,6 +6,8 @@
 
 struct Body
 {
+	bool IsColliding = false;
+
 	// Linear motion, linear force, mass
 	Vec2 position;
 	Vec2 velocity;

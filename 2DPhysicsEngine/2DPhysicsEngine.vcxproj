@@ -141,6 +141,8 @@
     <Image Include="assets\metal.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Physics\Contact.cpp" />
+    <ClCompile Include="src\Physics\CollisionDetection.cpp" />
     <ClCompile Include="src\Physics\Force.cpp" />
     <ClCompile Include="lib\SDL2_gfx\SDL2_gfxPrimitives.c" />
     <ClCompile Include="lib\SDL2_gfx\SDL2_imageFilter.c" />
@@ -155,6 +157,8 @@
     <ClCompile Include="src\Texture.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Physics\Contact.h" />
+    <ClInclude Include="src\Physics\CollisionDetection.h" />
     <ClInclude Include="src\common.h" />
     <ClInclude Include="src\defs.h" />
     <ClInclude Include="src\Physics\Force.h" />

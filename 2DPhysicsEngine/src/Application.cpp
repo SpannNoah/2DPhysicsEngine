@@ -1,6 +1,8 @@
 #include "Application.h"
 #include "Physics/Constants.h"
 #include "Physics/Force.h"
+#include "Physics/CollisionDetection.h"
+#include "Physics/Contact.h"
 
 bool Application::IsRunning() {
     return running;
@@ -67,8 +69,10 @@ void Application::Setup() {
     }
     case SCENE_NORMAL_GRAVITY:
     {
-        Body* hugeBall = new Body(CircleShape(50), Graphics::Width() / 2, Graphics::Height() / 2, 40.0f);
-        bodies.push_back(hugeBall);
+        Body* bigBall = new Body(CircleShape(100), 100, 100, 1.0f);
+        Body* smallBall = new Body(CircleShape(50), 500, 100, 1.0f);
+        bodies.push_back(bigBall);
+        bodies.push_back(smallBall);
         break;
     }
     case SCENE_ANGULAR_VELOCITY:
@@ -81,6 +85,14 @@ void Application::Setup() {
     {
 		Body* box = new Body(BoxShape(200, 100), Graphics::Width() / 2, Graphics::Height() / 2, 1.0f);
 		bodies.push_back(box);
+        break;
+    }
+    case SCENE_CIRCLES_COLLIDING:
+    {
+        Body* bigBall = new Body(CircleShape(100), 100, 100, 1.0f);
+        Body* smallBall = new Body(CircleShape(50), 500, 100, 1.0f);
+        bodies.push_back(bigBall);
+        bodies.push_back(smallBall);
         break;
     }
     default:
@@ -138,7 +150,7 @@ void Application::Input() {
                 {
                     pushForce.x = 0;
                 }
-                if (event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_7)
+                if (event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_8)
                 {
                     ResetScene(event.key.keysym.sym);
                 }
@@ -149,6 +161,16 @@ void Application::Input() {
                     Body* body = new Body(CircleShape(4), event.button.x, event.button.y, 1.0f);
                     bodies.push_back(body);
                 }
+                break;
+            case SDL_MOUSEMOTION: // This is for control over circle in collision scene
+                if (currentScene == SCENE_CIRCLES_COLLIDING)
+                {
+                    int x, y;
+                    SDL_GetMouseState(&x, &y);
+                    bodies[0]->position.x = x;
+                    bodies[0]->position.y = y;
+                }
+                break;
         }
     }
 }
@@ -157,6 +179,8 @@ void Application::Input() {
 // Update function (called several times per second to update objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Update() {
+    Graphics::ClearScreen(0xFF056263); // TODO: Remove this after done debugging or find more elegant way to debug
+    
     // Check if we are too fast and if so waste some milliseconds until we reach the millisecs_per_frame
     static int timePreviousFrame;
 
@@ -270,6 +294,16 @@ void Application::Update() {
         }
         break;
     }
+    case SCENE_CIRCLES_COLLIDING:
+        for (auto body : bodies)
+        {
+            //Vec2 windForce = Vec2(20.0f * PIXELS_PER_METER, 0.0f);
+            //body->AddForce(windForce);
+
+            //Vec2 weight = Vec2(0.0f, body->mass * 9.8f * PIXELS_PER_METER); // Weight is the force, gravity is the acceleration (W = mg)
+            //body->AddForce(weight);
+        }
+        break;
     default:
         break;
 
@@ -287,6 +321,30 @@ void Application::Update() {
         body->Update(deltaTime);
     }
 
+    for (auto body : bodies)
+    {
+        body->IsColliding = false;
+    }
+
+    // Check for collisions
+    for (int i = 0; i < bodies.size() - 1; i++)
+    {
+        for (int j = i + 1; j < bodies.size(); j++)
+        {
+            Body* a = bodies[i];
+            Body* b = bodies[j];
+
+            Contact contact;
+            if (CollisionDetection::IsColliding(a, b, contact)) 
+            {
+                Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFF00FFFF);
+                Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFF00FFFF);
+                Graphics::DrawLine(contact.start.x, contact.start.y, contact.start.x + contact.normal.x * 15, contact.start.y + contact.normal.y * 15, 0xFFFF00FF);
+                a->IsColliding = true;
+                b->IsColliding = true;
+            }
+        }
+    }
 
     // Check bounds of window
     for (auto body : bodies)
@@ -325,7 +383,7 @@ void Application::Update() {
 // Render function (called several times per second to draw objects)
 ///////////////////////////////////////////////////////////////////////////////
 void Application::Render() {
-    Graphics::ClearScreen(0xFF056263);
+    //Graphics::ClearScreen(0xFF056263); Moving to update just for debuging contact info
 
     static float angle = 0.0f;
 
@@ -415,6 +473,18 @@ void Application::Render() {
             }
         }
         break;
+    case SCENE_CIRCLES_COLLIDING:
+        for (auto body : bodies)
+        {
+            Uint32 color = body->IsColliding ? 0xFF0000FF : 0xFFFFFFFF;
+
+            if (body->shape->GetType() == ShapeType::CIRCLE)
+            {
+                CircleShape* circleShape = (CircleShape*)body->shape;
+                Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, angle, color);
+            }
+        }
+        break;
     default:
         break;
     }
@@ -450,6 +520,9 @@ void Application::SwitchScene(SDL_Keycode keyCode)
         break;
     case SDLK_7:
         currentScene = SCENE_BOX_DEFAULT;
+        break;
+    case SDLK_8:
+        currentScene = SCENE_CIRCLES_COLLIDING;
         break;
     default:
         currentScene = SCENE_NORMAL_GRAVITY;

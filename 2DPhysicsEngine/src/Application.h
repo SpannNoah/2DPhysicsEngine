@@ -15,6 +15,7 @@ class Application {
             SCENE_NORMAL_GRAVITY,
             SCENE_ANGULAR_VELOCITY,
             SCENE_BOX_DEFAULT,
+            SCENE_CIRCLES_COLLIDING,
         };
 
         bool running = false;
