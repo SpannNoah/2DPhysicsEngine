@@ -13,6 +13,7 @@ Body::Body(const Shape& shape, float x, float y, float mass)
 	this->angularAcceleration = 0.0f;
 	this->netForce = Vec2(0, 0);
 	this->sumTorque = 0.0f;
+	this->restitution = 1.0f;
 
 	if (mass != 0.0f)
 	{
@@ -20,7 +21,7 @@ Body::Body(const Shape& shape, float x, float y, float mass)
 	}
 	else
 	{
-		this->invMass = 0.0f;
+		this->invMass = 0.0f; // simulates an object with infinite mass
 	}
 
 	I = shape.GetMomentOfInertia() * mass;
@@ -40,6 +41,13 @@ Body::~Body()
 	std::cout << "Body Destructor Called" << std::endl;
 }
 
+bool Body::IsStatic() const
+{
+	// naive epsilon check for learning purposes
+	const float epsilon = 0.005f;
+	return fabs(invMass - 0.0f) < epsilon;
+}
+
 void Body::Update(float dt)
 {
 	IntegrateAngular(dt);
@@ -55,6 +63,8 @@ void Body::Update(float dt)
 
 void Body::IntegrateLinear(float dt)
 {
+	if (IsStatic()) return;
+
 	// F = ma -> a = f/m OR a = f * 1/m
 	acceleration = netForce * invMass;
 
@@ -68,6 +78,8 @@ void Body::IntegrateLinear(float dt)
 
 void Body::IntegrateAngular(float dt)
 {
+	if (IsStatic()) return;
+
 	// Find angular acceleration based on the torque being applied and moment of inertia
 	angularAcceleration = sumTorque * invI;
 
@@ -99,4 +111,14 @@ void Body::AddTorque(float torque)
 void Body::ClearTorque()
 {
 	sumTorque = 0.0f;
+}
+
+void Body::ApplyImpulse(const Vec2& j)
+{
+	if (IsStatic())
+	{
+		return;
+	}
+
+	velocity += j * invMass;
 }

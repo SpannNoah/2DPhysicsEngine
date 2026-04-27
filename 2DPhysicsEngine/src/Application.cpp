@@ -89,7 +89,7 @@ void Application::Setup() {
     }
     case SCENE_CIRCLES_COLLIDING:
     {
-        Body* bigBall = new Body(CircleShape(100), 100, 100, 1.0f);
+        Body* bigBall = new Body(CircleShape(100), 100, 100, 0.0f);
         Body* smallBall = new Body(CircleShape(50), 500, 100, 1.0f);
         bodies.push_back(bigBall);
         bodies.push_back(smallBall);
@@ -337,7 +337,7 @@ void Application::Update() {
             Contact contact;
             if (CollisionDetection::IsColliding(a, b, contact)) 
             {
-                contact.ResolvePenetration();
+                contact.ResolveCollision();
 
                 Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFF00FFFF);
                 Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFF00FFFF);

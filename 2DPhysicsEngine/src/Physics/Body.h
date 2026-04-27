@@ -26,11 +26,16 @@ struct Body
 	float I;
 	float invI;
 
+	// Coefficient of Restitution (elasticity)
+	float restitution;
+
 	// Pointer to geometry of this rigid body
 	Shape* shape = nullptr;
 
 	Body(const Shape& shape, float x, float y, float mass);
 	~Body();
+
+	bool IsStatic() const;
 
 	void Update(float dt);
 
@@ -42,5 +47,7 @@ struct Body
 
 	void AddTorque(float torque);
 	void ClearTorque();
+
+	void ApplyImpulse(const Vec2& j);
 };
 #endif

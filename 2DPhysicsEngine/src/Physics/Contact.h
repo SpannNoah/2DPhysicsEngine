@@ -14,10 +14,12 @@ struct Contact
 	Vec2 normal;
 	float depth;
 
-	void ResolvePenetration();
-
 	Contact() = default;
 	~Contact() = default;
+
+	void ResolvePenetration();
+	void ResolveCollision();
+
 };
 
 #define CONTACT_H
