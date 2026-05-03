@@ -37,12 +37,13 @@ struct PolygonShape : public Shape
 	PolygonShape() = default;
 	PolygonShape(const std::vector<Vec2> vertices);
 	virtual ~PolygonShape();
-	ShapeType GetType() const override;
-	Shape* Clone() const override;
-	float GetMomentOfInertia() const override;
 
-	// Function to translate and rotate polygon vertices from local space to world space
 	void UpdateVertices(float angle, const Vec2& position);
+	float GetMomentOfInertia() const override;
+	Vec2 EdgeAt(int index) const;
+	float FindMinimumSeparation(const PolygonShape* other, Vec2& axis, Vec2& point) const;
+	Shape* Clone() const override;
+	ShapeType GetType() const override;
 };
 
 struct BoxShape : public PolygonShape

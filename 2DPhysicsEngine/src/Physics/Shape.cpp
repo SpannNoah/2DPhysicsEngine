@@ -1,5 +1,6 @@
 #include "Shape.h"
 #include <iostream>
+#include <limits>	
 
 CircleShape::CircleShape(const float radius)
 {
@@ -44,15 +45,58 @@ ShapeType PolygonShape::GetType() const
 {
 	return ShapeType::POLYGON;
 }
+
 Shape* PolygonShape::Clone() const
 {
 	return new PolygonShape(localVertices);
 }
+
 float PolygonShape::GetMomentOfInertia() const
 {
 	//TODO: ...
 	return 0.0f;
 }
+
+Vec2 PolygonShape::EdgeAt(int index) const
+{
+	int currVertex = index;
+	int nextVertex = (index + 1) % worldVertices.size();
+	return worldVertices[nextVertex] - worldVertices[currVertex];
+}
+
+float PolygonShape::FindMinimumSeparation(const PolygonShape* other, Vec2& axis, Vec2& point) const
+{
+	float separation = std::numeric_limits<float>::lowest();
+
+	for (int i = 0; i < this->worldVertices.size(); i++)
+	{
+		Vec2 va = this->worldVertices[i];
+		Vec2 candidateAxis = this->EdgeAt(i).Normal();
+
+		float minSeparation = std::numeric_limits<float>::max();
+		Vec2 minVertex;
+		for (int j = 0; j < other->worldVertices.size(); j++)
+		{
+			Vec2 vb = other->worldVertices[j];
+			float proj = (vb - va).Dot(candidateAxis);
+			if (proj < minSeparation)
+			{
+				minSeparation = std::min(proj, minSeparation);
+				minVertex = vb;
+			}
+		}
+
+		if (minSeparation > separation)
+		{
+			separation = minSeparation;
+			axis = this->EdgeAt(i);
+			point = minVertex;
+		}
+		separation = std::max(separation, minSeparation);
+	}
+	return separation;
+}
+
 void PolygonShape::UpdateVertices(float angle, const Vec2& position)
 {
 	// Loop all vertices transforming from local to world space

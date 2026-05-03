@@ -95,6 +95,16 @@ void Application::Setup() {
         bodies.push_back(smallBall);
         break;
     }
+    case SCENE_SAT:
+    {
+        Body* boxA = new Body(BoxShape(200, 200), Graphics::Width() / 2.0f, Graphics::Height() / 2.0f, 1.0f);
+        Body* boxB = new Body(BoxShape(200, 200), Graphics::Width() / 2.0f, Graphics::Height() / 2.0f, 1.0f);
+        boxA->angularVelocity = 0.4f;
+        boxB->angularVelocity = 0.1f;
+        bodies.push_back(boxA);
+        bodies.push_back(boxB);
+        break;
+    }
     default:
         break;
     }
@@ -150,7 +160,7 @@ void Application::Input() {
                 {
                     pushForce.x = 0;
                 }
-                if (event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_8)
+                if (event.key.keysym.sym >= SDLK_1 && event.key.keysym.sym <= SDLK_9)
                 {
                     ResetScene(event.key.keysym.sym);
                 }
@@ -163,7 +173,7 @@ void Application::Input() {
                 }
                 break;
             case SDL_MOUSEMOTION: // This is for control over circle in collision scene
-                if (currentScene == SCENE_CIRCLES_COLLIDING)
+                if (currentScene == SCENE_CIRCLES_COLLIDING || currentScene == SCENE_SAT)
                 {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
@@ -304,6 +314,8 @@ void Application::Update() {
             //body->AddForce(weight);
         }
         break;
+    case SCENE_SAT:
+        break;
     default:
         break;
 
@@ -337,7 +349,10 @@ void Application::Update() {
             Contact contact;
             if (CollisionDetection::IsColliding(a, b, contact)) 
             {
-                contact.ResolveCollision();
+                if (currentScene != SCENE_SAT)
+                {
+                    contact.ResolveCollision();
+                }
 
                 Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFF00FFFF);
                 Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFF00FFFF);
@@ -487,6 +502,22 @@ void Application::Render() {
             }
         }
         break;
+    case SCENE_SAT:
+        for (auto body : bodies)
+        {
+            Uint32 color = body->IsColliding ? 0xFF0000FF : 0xFFFFFFFF;
+            if (body->shape->GetType() == ShapeType::CIRCLE)
+            {
+                CircleShape* circleShape = (CircleShape*)body->shape;
+                Graphics::DrawCircle(body->position.x, body->position.y, circleShape->radius, body->rotation, color);
+            }
+            else if (body->shape->GetType() == BOX)
+            {
+                BoxShape* boxShape = (BoxShape*)body->shape;
+                Graphics::DrawPolygon(body->position.x, body->position.y, boxShape->worldVertices, color);
+            }
+        }
+        break;
     default:
         break;
     }
@@ -525,6 +556,9 @@ void Application::SwitchScene(SDL_Keycode keyCode)
         break;
     case SDLK_8:
         currentScene = SCENE_CIRCLES_COLLIDING;
+        break;
+    case SDLK_9:
+        currentScene = SCENE_SAT;
         break;
     default:
         currentScene = SCENE_NORMAL_GRAVITY;
