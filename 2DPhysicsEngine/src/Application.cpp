@@ -97,12 +97,15 @@ void Application::Setup() {
     }
     case SCENE_SAT:
     {
-        Body* boxA = new Body(BoxShape(200, 200), Graphics::Width() / 2.0f, Graphics::Height() / 2.0f, 1.0f);
-        Body* boxB = new Body(BoxShape(200, 200), Graphics::Width() / 2.0f, Graphics::Height() / 2.0f, 1.0f);
-        boxA->angularVelocity = 0.4f;
-        boxB->angularVelocity = 0.1f;
+        Body* floor = new Body(BoxShape(Graphics::Width() - 50, 50), Graphics::Width() / 2.0f, Graphics::Height() - 50, 0.0f);
+        floor->restitution = .2f;
+        bodies.push_back(floor);
+        
+        Body* boxA = new Body(BoxShape(200, 200), Graphics::Width() / 2.0f, Graphics::Height() / 2.0f, 0.0f);
+        boxA->rotation = 1.4f;
+        boxA->restitution = .5f;
         bodies.push_back(boxA);
-        bodies.push_back(boxB);
+
         break;
     }
     default:
@@ -168,12 +171,20 @@ void Application::Input() {
             case SDL_MOUSEBUTTONUP:
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    Body* body = new Body(CircleShape(4), event.button.x, event.button.y, 1.0f);
-                    bodies.push_back(body);
+                    if (currentScene != SCENE_SAT)
+                    {
+                        Body* body = new Body(CircleShape(4), event.button.x, event.button.y, 1.0f);
+                        bodies.push_back(body);
+                    }
+                    else
+                    {
+                        Body* body = new Body(BoxShape(4, 4), event.button.x, event.button.y, 1.0f);
+                        bodies.push_back(body);
+                    }
                 }
                 break;
             case SDL_MOUSEMOTION: // This is for control over circle in collision scene
-                if (currentScene == SCENE_CIRCLES_COLLIDING || currentScene == SCENE_SAT)
+                if (currentScene == SCENE_CIRCLES_COLLIDING)
                 {
                     int x, y;
                     SDL_GetMouseState(&x, &y);
