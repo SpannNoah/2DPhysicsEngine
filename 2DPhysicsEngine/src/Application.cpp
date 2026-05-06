@@ -77,7 +77,7 @@ void Application::Setup() {
     }
     case SCENE_ANGULAR_VELOCITY:
     {
-        Body* hugeBall = new Body(CircleShape(50), Graphics::Width() / 2, Graphics::Height() / 2, 40.0f);
+        Body* hugeBall = new Body(CircleShape(100), Graphics::Width() / 2, Graphics::Height() / 2, 0.0f);
         bodies.push_back(hugeBall);
         break;
     }
@@ -173,12 +173,12 @@ void Application::Input() {
                 {
                     if (currentScene != SCENE_SAT)
                     {
-                        Body* body = new Body(CircleShape(4), event.button.x, event.button.y, 1.0f);
+                        Body* body = new Body(CircleShape(40), event.button.x, event.button.y, 1.0f);
                         bodies.push_back(body);
                     }
                     else
                     {
-                        Body* body = new Body(BoxShape(4, 4), event.button.x, event.button.y, 1.0f);
+                        Body* body = new Body(BoxShape(40, 40), event.button.x, event.button.y, 5.0f);
                         bodies.push_back(body);
                     }
                 }
@@ -326,6 +326,13 @@ void Application::Update() {
         }
         break;
     case SCENE_SAT:
+    {
+        for (auto body : bodies)
+        {
+            Vec2 weight = Vec2(0.0f, body->mass * 9.8f * PIXELS_PER_METER); // Weight is the force, gravity is the acceleration (W = mg)
+            body->AddForce(weight);
+        }
+    }
         break;
     default:
         break;
@@ -360,10 +367,7 @@ void Application::Update() {
             Contact contact;
             if (CollisionDetection::IsColliding(a, b, contact)) 
             {
-                if (currentScene != SCENE_SAT)
-                {
-                    contact.ResolveCollision();
-                }
+                contact.ResolveCollision();
 
                 Graphics::DrawFillCircle(contact.start.x, contact.start.y, 3, 0xFF00FFFF);
                 Graphics::DrawFillCircle(contact.end.x, contact.end.y, 3, 0xFF00FFFF);

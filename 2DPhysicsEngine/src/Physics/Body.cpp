@@ -14,6 +14,7 @@ Body::Body(const Shape& shape, float x, float y, float mass)
 	this->netForce = Vec2(0, 0);
 	this->sumTorque = 0.0f;
 	this->restitution = 1.0f;
+	this->friction = 0.7f;
 
 	if (mass != 0.0f)
 	{
@@ -121,4 +122,15 @@ void Body::ApplyImpulse(const Vec2& j)
 	}
 
 	velocity += j * invMass;
+}
+
+void Body::ApplyImpulse(const Vec2& j, const Vec2& r)
+{
+	if (IsStatic())
+	{
+		return;
+	}
+
+	velocity += j * invMass;
+	angularVelocity += r.Cross(j) * invI;
 }

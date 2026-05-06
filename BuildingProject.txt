@@ -1,0 +1,23 @@
+TODO: Convert this to a CMake file
+- Shift click all files -> right click and include in project
+- Install SDL2
+	- For anyone that might have issues setting up in Windows, I recommend to 	download the exact same versions, SDL2-devel-2.0.14-VC and SDL2_image-	devel-2.0.5-VC, 
+
+	https://libsdl.org/release/
+
+	https://www.libsdl.org/projects/SDL_image/release/
+Compiler Errors:
+- Copy folder from SDL2_devel-2.0.14-VC and paste in C drive
+- Copy lib and include from image download and paste on top of SDL2 folders
+- Right click solution -> properties and add include directories to VC++ directories
+- add to library directories -> use the x86 folder 
+
+Linker Errors:
+- Right click on project -> properties -> linker -> input
+- Add SDL2.lib
+- Add SDL2main.lib
+- Add SDL2_image.lib
+
+DLL Error:
+- SDL2 -> lib -> x86 
+- Select all .dlls copy and paste into folder (easiest way to get project running)
