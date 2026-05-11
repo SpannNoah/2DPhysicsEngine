@@ -1,3 +1,4 @@
+#include "../Graphics.h"
 #include "Body.h"
 #include <iostream>
 
@@ -39,7 +40,18 @@ Body::Body(const Shape& shape, float x, float y, float mass)
 Body::~Body()
 {
 	delete shape;
+	SDL_DestroyTexture(texture);
 	std::cout << "Body Destructor Called" << std::endl;
+}
+
+void Body::SetTexture(const char* fileName)
+{
+	SDL_Surface* surface = IMG_Load(fileName);
+	if (surface != nullptr)
+	{
+		texture = SDL_CreateTextureFromSurface(Graphics::renderer, surface);
+		SDL_FreeSurface(surface);
+	}
 }
 
 bool Body::IsStatic() const
@@ -53,13 +65,7 @@ void Body::Update(float dt)
 {
 	IntegrateAngular(dt);
 	IntegrateLinear(dt);
-
-	ShapeType type = shape->GetType();
-	if (type == BOX || type == POLYGON)
-	{
-		PolygonShape* polygonShape = (PolygonShape*)shape;
-		polygonShape->UpdateVertices(rotation, position);
-	}
+	shape->UpdateVertices(rotation, position);
 }
 
 void Body::IntegrateLinear(float dt)

@@ -155,6 +155,7 @@
     <ClCompile Include="src\Physics\Vec2.cpp" />
     <ClCompile Include="src\Widget.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Physics\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Physics\Contact.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="src\Physics\Vec2.h" />
     <ClInclude Include="src\Widget.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Physics\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="libjpeg-9.dll" />

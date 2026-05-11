@@ -1,6 +1,8 @@
 #ifndef BODY_H
 #define BODY_H
 
+#include <SDL.h>
+#include <SDL_image.h>
 #include "Vec2.h"
 #include "Shape.h"
 
@@ -33,6 +35,9 @@ struct Body
 	// Pointer to geometry of this rigid body
 	Shape* shape = nullptr;
 
+	// Pointer to SDL texture
+	SDL_Texture* texture = nullptr;
+
 	Body(const Shape& shape, float x, float y, float mass);
 	~Body();
 
@@ -51,5 +56,7 @@ struct Body
 
 	void ApplyImpulse(const Vec2& j);
 	void ApplyImpulse(const Vec2& j, const Vec2& r);
+
+	void SetTexture(const char* fileName);
 };
 #endif

@@ -13,6 +13,9 @@ void Contact::ResolvePenetration()
 
 	a->position -= normal * da;
 	b->position += normal * db;
+
+	a->shape->UpdateVertices(a->rotation, a->position);
+	b->shape->UpdateVertices(b->rotation, b->position);
 }
 
 void Contact::ResolveCollision()
@@ -20,7 +23,7 @@ void Contact::ResolveCollision()
 	ResolvePenetration();
 
 	// Define elasticity
-	float e = std::min(a->restitution, b->restitution);
+	float e = (a->restitution + b->restitution) / 2.0f; // Changed this to the average bc it makes sense to me that each objects restitution plays a role in the elasticity of an interaction
 	float f = std::min(a->friction, b->friction);
 
 	// Calculate relative velocity

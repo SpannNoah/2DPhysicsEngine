@@ -31,14 +31,26 @@ float CircleShape::GetMomentOfInertia() const
 	return .5f * (radius * radius);
 }
 
+void CircleShape::UpdateVertices(float angle, const Vec2& position)
+{
+	return;
+}
+
 PolygonShape::PolygonShape(std::vector<Vec2> vertices)
 {
-	// TODO: ...
+	// Initialize vertices of polygon shape
+	for (auto vertex : vertices)
+	{
+		localVertices.push_back(vertex);
+		worldVertices.push_back(vertex);
+	}
+	std::cout << "Polygon Shape Constructor Called" << std::endl;
 }
 
 PolygonShape::~PolygonShape()
 {
 	// TODO: ...
+	std::cout << "Polygon Shape Destructor Called" << std::endl;
 }
 
 ShapeType PolygonShape::GetType() const
@@ -54,7 +66,7 @@ Shape* PolygonShape::Clone() const
 float PolygonShape::GetMomentOfInertia() const
 {
 	//TODO: ...
-	return 0.0f;
+	return 5000.0f;
 }
 
 Vec2 PolygonShape::EdgeAt(int index) const

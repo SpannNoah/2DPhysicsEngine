@@ -3,6 +3,7 @@
 
 #include "./Graphics.h"
 #include "Physics/Body.h"
+#include "Physics/World.h"
 
 class Application {
     private:
@@ -17,12 +18,14 @@ class Application {
             SCENE_BOX_DEFAULT,
             SCENE_CIRCLES_COLLIDING,
             SCENE_SAT,
+            SCENE_POLYGONCIRCLE,
         };
 
+        bool debug = false;
         bool running = false;
         Scene currentScene;
         
-        std::vector<Body*> bodies;
+        World* world;
         Vec2 pushForce = Vec2(0.0f, 0.0f);
         Vec2 mouseCursor = Vec2(0, 0);
         bool leftMouseButtonDown = false;
